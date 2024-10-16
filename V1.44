@@ -1,0 +1,31 @@
+_DECODEURL
+ 
+=LAMBDA(a,LET(ver,"V1.44",TBLa,{127;193;223;239;247;255},TBLb,{1;0;2;3;4;0},refURL,"https://qiita.com/benikabocha/items/e943deb299d0f816f161",
+  IsU8LB,LAMBDA(c,((128<=c)*(c<192)+ISOMITTED(c))<>0),
+  U8chk,LAMBDA(\0a,\1a,LAMBDA(\0,\1,[\2],[\3],(IsU8LB(\1)*IsU8LB(\2)*IsU8LB(\3)*(BITAND(\0,\0a)+BITAND(\1,\1a)))<>0)),
+  U8chk2,U8chk(30, 0),
+  U8chk3,U8chk(15,32),
+  U8chk4,U8chk( 7,48),
+  U8toUCD,LAMBDA(\0a,\0s,\1s,\2s,LAMBDA(\0,\1,[\2],[\3],(BITLSHIFT(BITAND(\0,\0a),\0s)+BITLSHIFT(BITAND(\1,63),\1s))+(BITLSHIFT(BITAND(\2,63),\2s)+BITAND(\3,63)))),
+  U8toUCD2,U8toUCD(31, 6, 0, 0),
+  U8toUCD3,U8toUCD(15,12, 6, 0),
+  U8toUCD4,U8toUCD( 7,18,12, 6),
+  H2D,LAMBDA(_0,IFERROR(HEX2DEC(_0),0)),
+  X,LAMBDA(f,f(f)),
+  DECODEURL,X(LAMBDA(f,LAMBDA(a,LET(
+   _0,MID(a, 1, 1),\0,H2D(MID(a, 2, 2)),_1,MID(a, 4, 1),\1,H2D(MID(a, 5, 2)),
+   _2,MID(a, 7, 1),\2,H2D(MID(a, 8, 2)),_3,MID(a,10, 1),\3,H2D(MID(a,11, 2)),
+   \4,IF((_0="%")*(\0>0),XLOOKUP(\0,TBLa,TBLb,0,1,2),0),
+   \5,((\4=1)+(\4=2)*(_1="%")*U8chk2(\0,\1)+(\4=3)*(_1&_2="%%")*U8chk3(\0,\1,\2)+(\4=4)*(_1&_2&_3="%%%")*U8chk4(\0,\1,\2,\3))<>0,
+   _6,IF(\5,UNICHAR(CHOOSE(\4,\0,U8toUCD2(\0,\1),U8toUCD3(\0,\1,\2),U8toUCD4(\0,\1,\2,\3))),_0),
+   _7,IF(OR(LEN(a)<>0),_6&f(f)(REPLACE(a,1,IF(\5,\4*3,1),"")),a&""),
+   ret,(_7),
+   (ret)
+  )))),
+  DECODEURLX,X(LAMBDA(f,LAMBDA(a,LET(
+   _0,DECODEURL( a),
+   _1,DECODEURL(_0),
+   IF(AND(EXACT(_0,_1)),_1,f(f)(_1)))
+  ))),
+  DECODEURL(a)
+))
